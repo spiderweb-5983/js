@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fetch API - User Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #status {
+            font-weight: bold;
+            color: blue;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>User Information Dashboard</h2>
+
+    <button onclick="loadUsers()">Load Users</button>
+
+    <p id="status"></p>
+
+    <div id="userData"></div>
+
+    <script>
+        function loadUsers() {
+
+            const status = document.getElementById('status');
+            const output = document.getElementById('userData');
+
+            status.textContent = 'Loading...';
+            output.innerHTML = '';
+
+            fetch('https://jsonplaceholder.typicode.com/users')
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                return response.json();
+            })
+
+            .then(data => {
+
+                status.textContent = '';
+
+                let tableHTML = `
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>City</th>
+                        </tr>
+                `;
+
+                data.forEach(user => {
+                    tableHTML += `
+                        <tr>
+                            <td>${user.name}</td>
+                            <td>${user.username}</td>
+                            <td>${user.email}</td>
+                            <td>${user.address.city}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += `</table>`;
+
+                output.innerHTML = tableHTML;
+            })
+
+            .catch(error => {
+
+                status.textContent = 'Failed to load data.';
+                status.classList.add('error');
+
+                console.error('Fetch error:', error);
+            });
+        }
+    </script>
+
+</body>
+</html>
+
